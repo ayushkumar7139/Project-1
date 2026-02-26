@@ -87,3 +87,23 @@ System calculates:
 ---
 
 ## 📂 Project Structure
+
+
+---
+
+## ⚙️ How to Run
+
+1. Download the project files.
+2. Open `PESTICIDE.2.html` in any modern browser.
+3. Upload an image (simulation works with filename keywords).
+4. Select crop type.
+5. Enter land area.
+6. Click Detect → Calculate Dose.
+
+---
+
+## 🔄 Future Improvements
+
+- Integrate real AI model using:
+  ```js
+  fetch('/api/detect')
