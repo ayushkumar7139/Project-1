@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smart Pesticide Guide · enhanced prototype</title>
+  <style>
+    *{box-sizing: border-box; margin: 0; padding: 0;}
+    :root{
+      --accent: #1e6fdf;
+      --accent-soft: #e7f0fe;
+      --bg: #f4f9ff;
+      --card: #ffffff;
+      --border-light: #dde7f0;
+      --text-dark: #102a3c;
+      --text-muted: #3f5a6b;
+      --shadow-sm: 0 6px 14px rgba(17, 48, 80, 0.06);
+    }
+    body{
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      padding: 24px 16px;
+      color: var(--text-dark);
+      line-height: 1.5;
+    }
+    .container{
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    header{
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .logo-badge{
+      background: var(--accent);
+      border-radius: 16px;
+      width: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    h1{
+      font-size: 1.8rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin: 0 0 2px;
+    }
+    .muted{
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    .card{
+      background: var(--card);
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 20px;
+      border: 1px solid rgba(0,0,0,0.02);
+    }
+    .grid-2{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.8rem;
+      align-items: start;
+    }
+    label{
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: block;
+      margin-bottom: 6px;
+      color: #1d3b4f;
+    }
+    input, select, button{
+      font-family: inherit;
+      font-size: 0.95rem;
+      border-radius: 14px;
+    }
+    input[type=text], input[type=number], select{
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border-light);
+      background: white;
+      transition: 0.15s;
+      margin-bottom: 12px;
+    }
+    input:focus, select:focus{
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+      border-color: transparent;
+    }
+    .file-area{
+      border: 2px dashed #b9d3f0;
+      border-radius: 18px;
+      padding: 20px 16px;
+      text-align: center;
+      background: #f6fafe;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+    .file-area:hover{
+      background: #e9f2fd;
+    }
+    .file-area input{
+      opacity: 0;
+      position: absolute;
+      width: 0.1px;
+      height: 0.1px;
+    }
+    .file-label{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+      color: var(--accent);
+    }
+    .preview{
+      max-width: 100%;
+      max-height: 160px;
+      border-radius: 16px;
+      margin-top: 12px;
+      object-fit: cover;
+      background: #eef2f6;
+      border: 2px solid white;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+    }
+    button{
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-weight: 500;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: 0.1s;
+      box-shadow: 0 4px 8px rgba(0,85,180,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    button.secondary{
+      background: white;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      box-shadow: none;
+    }
+    button.small{
+      padding: 6px 12px;
+      font-size: 0.85rem;
+    }
+    .btn-group{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 16px 0 8px;
+    }
+    .badge{
+      background: var(--accent-soft);
+      padding: 4px 12px;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .result-row{
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #ecf3fa;
+    }
+    .result-row:last-child{
+      border-bottom: none;
+    }
+    .ingredient-item{
+      background: #f6fafd;
+      border-radius: 40px;
+      padding: 4px 14px 4px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0 6px 8px 0;
+      border: 1px solid #dae7f2;
+      font-size: 0.9rem;
+    }
+    .dot{
+      width: 8px;
+      height: 8px;
+      border-radius: 10px;
+      background: var(--accent);
+      display: inline-block;
+    }
+    .safety-box{
+      background: #f3f9fc;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border-left: 5px solid var(--accent);
+      font-size: 0.95rem;
+    }
+    .footnote{
+      border-top: 1px solid #e2ecf9;
+      margin-top: 20px;
+      padding-top: 16px;
+      font-size: 0.9rem;
+    }
+    .pill{
+      background: #f0f5fb;
+      padding: 2px 12px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+    }
+    @media (max-width: 720px){
+      .grid-2{grid-template-columns:1fr; gap:1rem;}
+      h1{font-size: 1.5rem;}
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo-badge">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v8M8 12h8M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    </div>
+    <div>
+      <h1>Smart Pesticide Guide</h1>
+      <div class="muted">👨‍🌾 Upload a photo · AI detection · dosage + ingredients</div>
+    </div>
+    <span class="badge" style="margin-left:auto;">v2 · enhanced prototype</span>
+  </header>
+
+  <!-- main card -->
+  <div class="card">
+    <div class="grid-2">
+      <!-- left column: image & detect -->
+      <div>
+        <label>📸 1. Upload plant/pest image</label>
+        <div class="file-area" onclick="document.getElementById('imageInput').click();">
+          <input id="imageInput" type="file" accept="image/*" />
+          <div class="file-label">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="2.5"/><circle cx="8.5" cy="8.5" r="2.5"/><path d="m21 15-5-4-3 3-4-4-5 5"/></svg>
+            <span>Click to choose image (simulated)</span>
+            <span class="pill">.jpg · .png</span>
+          </div>
+        </div>
+        <img id="preview" class="preview" style="display:none" alt="preview" />
+
+        <div class="btn-group">
+          <button id="detectBtn">🔍 Detect pest (simulate)</button>
+          <button id="clearBtn" class="secondary small">Clear</button>
+        </div>
+        <div class="muted" style="margin-top: 6px;">
+          ⚡ uses filename keywords / random pick (replace with real API)
+        </div>
+      </div>
+
+      <!-- right column: crop + area -->
+      <div>
+        <label>🌾 2. Crop type</label>
+        <select id="cropSelect">
+          <option value="wheat">🌾 Wheat</option>
+          <option value="rice">🍚 Rice / Paddy</option>
+          <option value="cotton" selected>🧶 Cotton</option>
+          <option value="maize">🌽 Maize</option>
+          <option value="vegetables">🥬 Vegetables</option>
+          <option value="fruits">🍎 Fruits</option>
+        </select>
+
+        <label>📏 3. Area to treat</label>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <input id="area" type="number" step="0.01" placeholder="e.g., 2.5" value="1" style="flex:2; min-width:100px;" />
+          <select id="areaUnit" style="flex:1;">
+            <option value="acre">Acre</option>
+            <option value="hectare">Hectare</option>
+            <option value="sqm">m²</option>
+          </select>
+          <button id="calcDoseBtn" class="secondary" style="flex:0 0 auto;">Calculate dose</button>
+        </div>
+        <div id="doseResult" style="margin-top: 16px; background:#f6fafd; border-radius:18px; padding:12px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- recommendation card (hidden initially) -->
+  <div class="card" id="suggestionCard" style="display:none;">
+    <div style="display:flex; gap:10px; align-items: center; margin-bottom: 12px;">
+      <span class="badge" style="background: #dff0d8; color:#206520;">✅ recommendation active</span>
+      <span id="confBadge" class="pill"></span>
+    </div>
+    <div id="suggestionSummary" style="font-size:1.2rem; font-weight:500; margin-bottom: 18px;"></div>
+
+    <h4 style="display: flex; gap: 6px; align-items: center; margin: 20px 0 8px;">🧪 Active ingredients</h4>
+    <div id="ingredientsList" style="margin-bottom: 16px; display: flex; flex-wrap: wrap;"></div>
+
+    <h4 style="margin: 12px 0 6px;">⚠️ Safety & usage</h4>
+    <div id="safetyNotes" class="safety-box"></div>
+
+    <!-- additional info from DB (dose reference) -->
+    <div style="margin-top: 16px; font-size:0.9rem; background:#fafdff; border-radius:16px; padding:12px;" id="extraDoseInfo"></div>
+  </div>
+
+  <!-- info footer -->
+  <div class="card" style="background:#eef5fc;">
+    <h4 style="margin-bottom: 8px;">🧩 integration notes</h4>
+    <ul style="margin-left: 1.4rem; color:#1e4158;">
+      <li>Detection is <strong>simulated</strong> (keywords or random). Replace <code>simulateDetect()</code> with real <code>fetch('/api/detect')</code>.</li>
+      <li>Pesticide database extended (now with matching to crop). Demo shows fallback if crop mismatches.</li>
+      <li>Dose calculation uses both acre & hectare; displays appropriate unit.</li>
+      <li>UI: file drop area, badges, ingredient pills, safety box.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // Enhanced pesticide DB with crop compatibility & dosage variations
+    const PESTICIDES = {
+      'pest-001': {
+        name: 'ImidaSafe 200 (Imidacloprid)',
+        crops: ['cotton', 'vegetables', 'fruits'],
+        dosePerAcre_ml: 100,
+        dosePerHectare_ml: 2500,
+        ingredients: [{ name: 'Imidacloprid', percent: '20%' }, { name: 'surfactant', percent: '10%' }, { name: 'solvent', percent: '70%' }],
+        safety: 'Wear gloves and mask. Do not apply during windy weather. Toxic to bees – avoid flowering weeds.',
+        form: 'Liquid'
+      },
+      'pest-002': {
+        name: 'FungiGuard (Copper Oxychloride)',
+        crops: ['rice', 'wheat', 'vegetables'],
+        dosePerAcre_ml: 800,
+        dosePerHectare_ml: 20000,
+        ingredients: [{ name: 'Copper Oxychloride', percent: '30%' }, { name: 'wettable powder', percent: '70%' }],
+        safety: 'Avoid contact with skin. Keep away from fish ponds and water sources.',
+        form: 'WP'
+      },
+      'pest-003': {
+        name: 'BioNeem 50 (Azadirachtin)',
+        crops: ['vegetables', 'fruits', 'cotton'],
+        dosePerAcre_ml: 400,
+        dosePerHectare_ml: 10000,
+        ingredients: [{ name: 'Azadirachtin', percent: '5%' }, { name: 'neem oil', percent: '45%' }, { name: 'emulsifier', percent: '50%' }],
+        safety: 'Safe for beneficial insects if used in evening. Non-toxic to mammals.',
+        form: 'Liquid'
+      },
+      'pest-004': {    // extra for fallback
+        name: 'CyperMaster 10EC (Cypermethrin)',
+        crops: ['cotton', 'maize', 'vegetables'],
+        dosePerAcre_ml: 200,
+        dosePerHectare_ml: 5000,
+        ingredients: [{ name: 'Cypermethrin', percent: '10%' }, { name: 'emulsifier', percent: '10%' }, { name: 'solvent', percent: '80%' }],
+        safety: 'Highly toxic to fish, moderate to bees. Use protective clothing.',
+      }
+    };
+
+    // map pest name to pesticideId (simulated)
+    const PEST_KEYWORDS = [
+      { keywords: ['aphid', 'greenfly', 'jassid'], pest: 'Aphids', id: 'pest-001' },
+      { keywords: ['mildew', 'fungus', 'blight', 'rust'], pest: 'Fungal disease', id: 'pest-002' },
+      { keywords: ['worm', 'caterpillar', 'borer', 'larva'], pest: 'Caterpillar', id: 'pest-003' },
+      { keywords: ['thrips', 'whitefly'], pest: 'Sucking pest', id: 'pest-001' },
+      { keywords: ['beetle', 'weevil'], pest: 'Beetle', id: 'pest-004' },
+    ];
+
+    const fileInput = document.getElementById('imageInput');
+    const preview = document.getElementById('preview');
+    const detectBtn = document.getElementById('detectBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const cropSelect = document.getElementById('cropSelect');
+    const suggestionCard = document.getElementById('suggestionCard');
+    const suggestionSummary = document.getElementById('suggestionSummary');
+    const ingredientsList = document.getElementById('ingredientsList');
+    const safetyNotes = document.getElementById('safetyNotes');
+    const calcDoseBtn = document.getElementById('calcDoseBtn');
+    const doseResult = document.getElementById('doseResult');
+    const confBadge = document.getElementById('confBadge');
+    const extraDoseInfo = document.getElementById('extraDoseInfo');
+
+    let lastDetection = null;   // stores { pest, pesticideId, confidence }
+
+    // --- file preview
+    fileInput.addEventListener('change', e => {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      const url = URL.createObjectURL(f);
+      preview.src = url;
+      preview.style.display = 'block';
+    });
+
+    clearBtn.addEventListener('click', () => {
+      fileInput.value = '';
+      preview.src = '';
+      preview.style.display = 'none';
+      suggestionCard.style.display = 'none';
+      doseResult.innerHTML = '';
+      lastDetection = null;
+    });
+
+    // --- detect (simulated)
+    detectBtn.addEventListener('click', async () => {
+      if (!fileInput.files || !fileInput.files[0]) {
+        alert('📤 Please upload an image first (any file – simulation uses filename).');
+        return;
+      }
+      const detected = await simulateDetect(fileInput.files[0]);
+      lastDetection = detected;
+      showSuggestion(detected);
+    });
+
+    // --- calculate dose
+    calcDoseBtn.addEventListener('click', () => {
+      if (!lastDetection) {
+        alert('Run detection first (or use fallback random).');
+        return;
+      }
+      const area = parseFloat(document.getElementById('area').value);
+      const unit = document.getElementById('areaUnit').value;
+      if (isNaN(area) || area <= 0) {
+        alert('Enter a positive area.');
+        return;
+      }
+
+      const pestic = PESTICIDES[lastDetection.pesticideId];
+      if (!pestic) {
+        doseResult.innerHTML = '<div class="muted">⚠️ No pesticide data for this detection.</div>';
+        return;
+      }
+
+      // conversion to acre & hectare
+      let acres = area, hectares = area;
+      if (unit === 'hectare') {
+        acres = area * 2.47105;
+        hectares = area;
+      } else if (unit === 'sqm') {
+        hectares = area / 10000;
+        acres = hectares * 2.47105;
+      } else { // acre
+        acres = area;
+        hectares = area * 0.404686;
+      }
+
+      const mlPerAcre = pestic.dosePerAcre_ml * acres;
+      const mlPerHa = pestic.dosePerHectare_ml * hectares;
+
+      // ml to L if > 1000
+      const formatMl = (ml) => ml >= 1000 ? (ml/1000).toFixed(2) + ' L' : ml.toFixed(0) + ' ml';
+
+      doseResult.innerHTML = `
+        <div class="result-row"><span>🌱 based on acre (${acres.toFixed(2)} ac):</span> <strong>${formatMl(mlPerAcre)}</strong></div>
+        <div class="result-row"><span>🌍 based on hectare (${hectares.toFixed(2)} ha):</span> <strong>${formatMl(mlPerHa)}</strong></div>
+        <div class="muted" style="margin-top:8px;">✔️ Always read the label. Dilute according to instructions.</div>
+      `;
+    });
+
+    // --- display suggestion card
+    function showSuggestion(detected) {
+      const pestic = PESTICIDES[detected.pesticideId];
+      if (!pestic) {
+        suggestionSummary.innerHTML = `Detected: <strong>${detected.pest}</strong> (conf. ${Math.round(detected.confidence*100)}%)<br/>❌ No matching pesticide in DB.`;
+        ingredientsList.innerHTML = '<span class="muted">–</span>';
+        safetyNotes.innerText = 'No safety info.';
+        extraDoseInfo.innerHTML = '';
+      } else {
+        const crop = cropSelect.value;
+        const cropOk = pestic.crops.includes(crop) ? '✅ compatible' : '⚠️ not primary crop (check label)';
+        suggestionSummary.innerHTML = `Detected: <strong>${detected.pest}</strong> · confidence ${Math.round(detected.confidence*100)}%<br/>🧴 <strong>${pestic.name}</strong> <span class="pill">${pestic.form || 'N/A'}</span> <span class="pill">${cropOk}</span>`;
+
+        ingredientsList.innerHTML = pestic.ingredients.map(i => 
+          `<span class="ingredient-item"><span class="dot"></span>${i.name} <strong>${i.percent}</strong></span>`
+        ).join('');
+
+        safetyNotes.innerText = pestic.safety;
+
+        extraDoseInfo.innerHTML = `<strong>Dose reference</strong> · ${pestic.dosePerAcre_ml} ml/acre · ${pestic.dosePerHectare_ml/1000} L/ha`;
+      }
+
+      confBadge.innerText = `confidence ${Math.round(detected.confidence*100)}%`;
+      suggestionCard.style.display = 'block';
+
+      // scroll into view
+      suggestionCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ---------- simulation (replace with real API) ----------
+    async function simulateDetect(file) {
+      return new Promise((resolve) => {
+        const name = file.name.toLowerCase();
+        let matched = null;
+
+        // 1) try keyword matching
+        for (let p of PEST_KEYWORDS) {
+          if (p.keywords.some(kw => name.includes(kw))) {
+            matched = { pest: p.pest, pesticideId: p.id, confidence: 0.82 + Math.random()*0.15 };
+            break;
+          }
+        }
+        if (matched) {
+          resolve(matched);
+        } else {
+          // 2) fallback completely random (but also consider crop for fun)
+          const keys = Object.keys(PESTICIDES);
+          const randomId = keys[Math.floor(Math.random() * keys.length)];
+          const pestNames = { 'pest-001': 'Aphids', 'pest-002': 'Leaf spot', 'pest-003': 'Caterpillar', 'pest-004': 'Beetle' };
+          resolve({
+            pest: pestNames[randomId] || 'General pest',
+            pesticideId: randomId,
+            confidence: 0.68 + Math.random() * 0.25
+          });
+        }
+      });
+    }
+
+    // optional: if you want to link crop select to detection later (just demo)
+
+    // prefill dose result on first load? 
+    // initial message
+    doseResult.innerHTML = '<div class="muted">↕️ after detection, enter area and press calculate.</div>';
+  })();
+</script>
+</body>
+</html>
